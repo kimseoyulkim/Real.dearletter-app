@@ -5,11 +5,7 @@ import firebase_admin
 from firebase_admin import credentials, db
 import requests
 
-# Hugging Face Zephyr-7b-beta Inference API 연동 함수 (한글 프롬프트 실험)
-HF_API_URL = "https://api-inference.huggingface.co/models/google/gemma-2b-it"
-HF_HEADERS = {"Authorization": f"Bearer {st.secrets['HF_API_KEY']}"}
-
-# 캐릭터별 프롬프트 (한글 간결 버전 권장, 장문 X)
+# =================== 캐릭터 프롬프트(간결/한글) ===================
 CHARACTER_PROMPTS = {
     "엘리자베스 베넷": "당신은 오만과 편견의 엘리자베스 베넷입니다. 재치 있고, 자신의 생각을 분명하게 말합니다. 예의는 지키지만 솔직한 대화를 좋아합니다.",
     "데미안": "당신은 헤르만 헤세의 데미안입니다. 철학적이고 상징적인 대화와, 자아, 내면, 성장에 대해 이야기합니다.",
@@ -18,32 +14,31 @@ CHARACTER_PROMPTS = {
     "도로시": "당신은 오즈의 마법사의 도로시입니다. 용기, 우정, 꿈과 희망을 이야기하며, 밝고 실용적으로 조언합니다."
 }
 
-def zephyr_reply(character, user_input, max_length=80):
+# =================== GroqCloud Llama-4 API 연동 함수 ===================
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
+GROQ_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
+GROQ_HEADERS = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {st.secrets['GROQ_API_KEY']}"
+}
+
+def groq_reply(character, user_input, max_tokens=180):
     system_prompt = CHARACTER_PROMPTS.get(character, "")
-    prompt = f"{system_prompt}\n사용자: {user_input}\n{character}:"
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_input}
+    ]
     payload = {
-        "inputs": prompt,
-        "parameters": {
-            "max_new_tokens": max_length,
-            "do_sample": True,
-            "top_p": 0.95,
-            "temperature": 0.8
-        }
+        "model": GROQ_MODEL,
+        "messages": messages,
+        "max_tokens": max_tokens,
+        "temperature": 0.7
     }
     try:
-        response = requests.post(HF_API_URL, headers=HF_HEADERS, json=payload, timeout=60)
+        response = requests.post(GROQ_API_URL, headers=GROQ_HEADERS, json=payload, timeout=60)
         if response.status_code == 200:
             result = response.json()
-            # Zephyr는 {"generated_text": "..."} 형태가 아니라 {"generated_text": "..."} 또는 {"generated_text": "...", ...}로 올 수 있음
-            if isinstance(result, dict) and "generated_text" in result:
-                answer = result["generated_text"].split(f"{character}:")[-1].strip()
-                return answer[:180]
-            elif isinstance(result, list) and "generated_text" in result[0]:
-                answer = result[0]["generated_text"].split(f"{character}:")[-1].strip()
-                return answer[:180]
-            else:
-                # 텍스트 필드가 다를 수 있음
-                return "[AI 응답 오류] 결과 형식이 예상과 다릅니다."
+            return result["choices"][0]["message"]["content"].strip()
         elif response.status_code == 503:
             return "[대기열] 모델이 로딩 중입니다. 잠시 후 다시 시도해 주세요."
         else:
@@ -51,7 +46,7 @@ def zephyr_reply(character, user_input, max_length=80):
     except Exception as e:
         return f"[네트워크 오류] {e}"
 
-# ====== Firebase Admin 초기화 (Secrets에서 base64 인코딩 JSON 불러오기) ======
+# =================== Firebase Admin 초기화 ===================
 if not firebase_admin._apps:
     encoded_cred = st.secrets["FIREBASE_CREDENTIALS_B64"]
     decoded_json = base64.b64decode(encoded_cred).decode()
@@ -81,12 +76,13 @@ def firebase_signup(email, password):
     else:
         raise Exception(res.json().get('error', {}).get('message', '회원가입 실패'))
 
-# ===== Streamlit UI 시작 =====
+# =================== Streamlit UI 시작 ===================
 st.set_page_config(page_title="SEMIBOT 문학 챗봇", layout="centered")
 st.title("📚 SEMIBOT 문학 챗봇")
-st.write("API KEY 길이:", len(st.secrets['HF_API_KEY']))
-st.write("API KEY 앞 8자리:", st.secrets['HF_API_KEY'][:8])
-# ----------------- [로그인/회원가입] -----------------
+st.write("Groq API KEY 길이:", len(st.secrets['GROQ_API_KEY']))
+st.write("Groq API KEY 앞 8자리:", st.secrets['GROQ_API_KEY'][:8])
+
+# -------------- 로그인/회원가입 --------------
 if 'user' not in st.session_state:
     menu = st.sidebar.selectbox('메뉴 선택', ['로그인', '회원가입'])
 
@@ -132,7 +128,7 @@ if 'user' not in st.session_state:
 
     st.info("로그인 또는 회원가입을 해주세요.")
 
-# ----------------- [메인 서비스] -----------------
+# -------------- 메인 서비스 --------------
 else:
     user_email = st.session_state['user']['email']
     nickname = st.session_state.get('nickname', user_email)
@@ -153,12 +149,12 @@ else:
     else:
         page = st.session_state['page']
 
-    # ----------------- [홈] -----------------
+    # ---------- [홈] ----------
     if page == "홈":
         st.header("홈")
         st.markdown("여기는 SEMIBOT의 홈입니다. 기능 버튼을 눌러보세요!")
 
-    # ----------------- [독서성향테스트] -----------------
+    # ---------- [독서성향테스트] ----------
     elif page == "독서성향테스트":
         st.header("📖 독서 성향 테스트")
         st.write("아래 5문항을 모두 답해주세요.")
@@ -245,7 +241,7 @@ else:
             5. 오즈의 마법사 - 도로시
             """)
 
-    # ----------------- [챗봇] -----------------
+    # ---------- [챗봇] ----------
     elif page == "챗봇":
         character_list = ["엘리자베스 베넷", "데미안", "앤 셜리", "어린 왕자", "도로시"]
 
@@ -286,7 +282,7 @@ else:
             if msg.strip() != "":
                 new_chats = prev_chats + [f"나: {msg}"]
                 with st.spinner("AI 답변 생성 중... (최대 1분 소요)"):
-                    ai_reply = zephyr_reply(selected_character, msg)
+                    ai_reply = groq_reply(selected_character, msg)
                 new_chats.append(f"{selected_character}: {ai_reply}")
                 ref.set(new_chats)
                 st.rerun()
@@ -294,14 +290,14 @@ else:
             ref.delete()
             st.rerun()
 
-    # ----------------- [마이페이지] -----------------
+    # ---------- [마이페이지] ----------
     elif page == "마이페이지":
         st.header("📊 마이페이지")
         st.markdown(f"**닉네임:** {nickname}")
         st.markdown(f"**이메일:** {user_email}")
         st.markdown("포인트, 문해력 레벨, 테마, 리딩 목표 등 표시 (예시)")
 
-    # ----------------- [마켓] -----------------
+    # ---------- [마켓] ----------
     elif page == "마켓":
         st.header("🎁 SEMIBOT 마켓")
         st.markdown("""
@@ -309,12 +305,7 @@ else:
          - 도서/굿즈 연계 상품 판매
         """)
 
-    # ----------------- [로그아웃] -----------------
+    # ---------- [로그아웃] ----------
     if st.button("로그아웃"):
         st.session_state.clear()
         st.rerun()
-
-
-
-
-
