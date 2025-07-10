@@ -4,6 +4,7 @@ import json
 import firebase_admin
 from firebase_admin import credentials, db
 import requests
+import random 
 import json
 with open("tarot.json", encoding="utf-8") as f:
     tarot_cards = json.load(f)
