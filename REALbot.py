@@ -383,8 +383,16 @@ elif 'user' in st.session_state or st.session_state.get('guest_mode', False):
         else:
             selected_character = st.session_state['selected_character']
 
-        uid = st.session_state['user']['localId']
-        ref = db.reference(f"users/{uid}/chats/{selected_character}")
+        if 'user' in st.session_state:
+            uid = st.session_state['user']['localId']
+            ref = db.reference(f"users/{uid}/chats/{selected_character}")
+            prev_chats = ref.get() or []
+        else:
+            uid = None
+        # 게스트는 세션에만 임시로 대화 저장
+            chat_key = f"guest_chat_{selected_character}"
+            prev_chats = st.session_state.get(chat_key, [])
+
         prev_chats = ref.get() or []
 
         st.markdown(f"#### [{selected_character} 챗봇] 이전 대화")
