@@ -366,61 +366,61 @@ elif 'user' in st.session_state or st.session_state.get('guest_mode', False):
 
     # ---------- [챗봇] ----------
     if page == "챗봇":
-    character_list = ["엘리자베스 베넷", "데미안", "앤 셜리", "어린 왕자", "도로시"]
+        character_list = ["엘리자베스 베넷", "데미안", "앤 셜리", "어린 왕자", "도로시"]
 
-    if 'selected_character' not in st.session_state or st.session_state['selected_character'] not in character_list:
-        st.session_state['selected_character'] = character_list[0]
+        if 'selected_character' not in st.session_state or st.session_state['selected_character'] not in character_list:
+            st.session_state['selected_character'] = character_list[0]
 
-    selected_character = st.selectbox(
-        "챗봇 캐릭터 선택",
-        character_list,
-        index=character_list.index(st.session_state['selected_character']),
-        key="character_select"
-    )
-    if selected_character != st.session_state['selected_character']:
-        st.session_state['selected_character'] = selected_character
-        st.rerun()
-    else:
-        selected_character = st.session_state['selected_character']
+        selected_character = st.selectbox(
+            "챗봇 캐릭터 선택",
+            character_list,
+            index=character_list.index(st.session_state['selected_character']),
+            key="character_select"
+        )
+        if selected_character != st.session_state['selected_character']:
+            st.session_state['selected_character'] = selected_character
+            st.rerun()
+        else:
+            selected_character = st.session_state['selected_character']
 
-    # --- 회원/게스트 분기 ---
-    if 'user' in st.session_state:
-        uid = st.session_state['user']['localId']
-        ref = db.reference(f"users/{uid}/chats/{selected_character}")
-        prev_chats = ref.get() or []
-    else:
-        uid = None
-        chat_key = f"guest_chat_{selected_character}"
-        prev_chats = st.session_state.get(chat_key, [])
+        # --- 회원/게스트 분기 ---
+        if 'user' in st.session_state:
+            uid = st.session_state['user']['localId']
+            ref = db.reference(f"users/{uid}/chats/{selected_character}")
+            prev_chats = ref.get() or []
+        else:
+            uid = None
+            chat_key = f"guest_chat_{selected_character}"
+            prev_chats = st.session_state.get(chat_key, [])
 
-    st.markdown(f"#### [{selected_character} 챗봇] 이전 대화")
-    if prev_chats:
-        for msg in prev_chats:
-            st.markdown(f"- {msg}")
-    else:
-        st.info("아직 대화 내역이 없습니다. 첫 메시지를 남겨보세요!")
+        st.markdown(f"#### [{selected_character} 챗봇] 이전 대화")
+        if prev_chats:
+            for msg in prev_chats:
+                st.markdown(f"- {msg}")
+        else:
+            st.info("아직 대화 내역이 없습니다. 첫 메시지를 남겨보세요!")
 
-    msg = st.text_input("메시지 입력(Enter로 전송)", key="chat_input")
-    col1, col2 = st.columns([1, 1])
-    with col1:
-        send_btn = st.button("전송")
-    with col2:
-        delete_btn = st.button("대화 전체 삭제")
+        msg = st.text_input("메시지 입력(Enter로 전송)", key="chat_input")
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            send_btn = st.button("전송")
+        with col2:
+            delete_btn = st.button("대화 전체 삭제")
 
     # --- 메시지 전송 ---
-    if send_btn:
-        if msg.strip() != "":
-            new_chats = prev_chats + [f"나: {msg}"]
-            with st.spinner("AI 답변 생성 중... (최대 1분 소요)"):
-                ai_reply = groq_reply(selected_character, msg)
-            new_chats.append(f"{selected_character}: {ai_reply}")
+        if send_btn:
+            if msg.strip() != "":
+                new_chats = prev_chats + [f"나: {msg}"]
+                with st.spinner("AI 답변 생성 중... (최대 1분 소요)"):
+                    ai_reply = groq_reply(selected_character, msg)
+                new_chats.append(f"{selected_character}: {ai_reply}")
 
-            if uid:
-                ref.set(new_chats)
-            else:
-                st.session_state[chat_key] = new_chats
+                if uid:
+                    ref.set(new_chats)
+                else:
+                    st.session_state[chat_key] = new_chats
 
-            st.rerun()
+                st.rerun()
 
     # --- 대화 전체 삭제 ---
     if delete_btn:
