@@ -4,6 +4,9 @@ import json
 import firebase_admin
 from firebase_admin import credentials, db
 import requests
+import json
+with open("tarot.json", encoding="utf-8") as f:
+    tarot_cards = json.load(f)
 
 # =================== 캐릭터 프롬프트(간결/한글) ===================
 CHARACTER_PROMPTS = {
@@ -410,6 +413,37 @@ else:
          - 캐릭터별 명대사 조언 타로
          - 도서/굿즈 연계 상품 판매
         """)
+    elif page == "마켓":
+    st.header("🎁 SEMIBOT 마켓")
+    st.markdown("> **오늘의 조언 타로!**\n")
+    st.write("문학 캐릭터 명대사 기반으로 하루에 한 번 나만의 조언 카드를 뽑고, 고전·웹소설 추천도 받아보세요.")
+
+    import random
+    # 카드 뽑기 (하루 1회 제한 등은 생략, 필요시 추가 가능)
+    if 'chosen_idx' not in st.session_state:
+        random.shuffle(tarot_cards)
+        cols = st.columns(len(tarot_cards))
+        for i, card in enumerate(tarot_cards):
+            with cols[i]:
+                st.markdown(f"**{card['character']}**")
+                if st.button(f"카드 {i+1} 뽑기", key=f"draw_{i}"):
+                    st.session_state['chosen_idx'] = i
+                    st.rerun()
+    else:
+        card = tarot_cards[st.session_state['chosen_idx']]
+        st.header(f"{card['character']}의 조언")
+        for q in card['quotes']:
+            st.markdown(f"- _{q}_")
+        st.markdown("### 📚 고전 추천")
+        st.markdown(", ".join(card['classic_books']))
+        st.markdown("### 📖 웹소설 추천")
+        st.markdown(", ".join(card['webnovels']))
+        if st.button("다시 뽑기"):
+            del st.session_state['chosen_idx']
+            st.rerun()
+
+    st.markdown("---")
+    st.markdown("**마켓의 도서 및 굿즈는 출판사 공식 라이선스를 통해 추천됩니다.**")
 
     # ---------- [로그아웃] ----------
     if st.button("로그아웃"):
