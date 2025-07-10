@@ -1,13 +1,19 @@
 import streamlit as st
+import base64
+import json
+import streamlit as st
 import firebase_admin
 from firebase_admin import credentials, db
 import requests
 
-# ====== Firebase Admin 초기화 ======
+# ====== Firebase Admin 초기화 (Secrets에서 base64 인코딩 JSON 불러오기) ======
 if not firebase_admin._apps:
-    cred = credentials.Certificate('login-802ba-firebase-adminsdk-fbsvc-5dc93a3858.json')  # 본인 JSON 파일명으로 교체
+    encoded_cred = st.secrets["FIREBASE_CREDENTIALS_B64"]
+    decoded_json = base64.b64decode(encoded_cred).decode()
+    cred_dict = json.loads(decoded_json)
+    cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://login-802ba-default-rtdb.firebaseio.com'  # 본인 Realtime DB URL로 교체
+        'databaseURL': 'https://login-802ba-default-rtdb.firebaseio.com'
     })
 
 API_KEY = "AIzaSyDOTRNLOMC2iJ-rpa9ADMsM0ZHsZF-FqYE"
