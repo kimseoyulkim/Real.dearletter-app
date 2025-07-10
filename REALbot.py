@@ -467,7 +467,7 @@ else:
         img_url = "https://github.com/kimseoyulkim/Real.dearletter-app/raw/main/realbook.PNG"
         image_tag = f'<img src="{img_url}" alt="오늘의 추천 상품" style="width:120px; border-radius:18px; margin-bottom:10px; box-shadow:0 2px 10px #d4c4e4;">'
         
-        product_content = """
+        product_content = f"""
         <div style="text-align:center;">
             {image_tag}
             <span style="font-size:2em;">🎁 <b>오늘의 추천 상품</b></span><br><br>
