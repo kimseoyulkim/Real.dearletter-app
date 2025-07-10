@@ -193,8 +193,8 @@ st.set_page_config(page_title="DEARLETTER 문학 챗봇", layout="centered")
 st.title("📚DEARLETTER")
 
 # -------------- 로그인/회원가입 --------------
-if 'user' not in st.session_state:
-    menu = st.sidebar.selectbox('메뉴 선택', ['로그인', '회원가입'])
+if 'user' not in st.session_state and 'guest_mode' not in st.session_state:
+    menu = st.sidebar.selectbox('메뉴 선택', ['로그인', '회원가입','게스트로 시작하기'])
 
     if menu == '로그인':
         email = st.text_input('이메일')
@@ -235,8 +235,13 @@ if 'user' not in st.session_state:
                     st.success('회원가입 성공! 로그인 해주세요.')
                 except Exception as e:
                     st.error(f"회원가입 실패: {e}")
+    elif menu == '게스트로 시작하기':
+        st.session_state['guest_mode'] = True
+        st.session_state['nickname'] = '게스트'
+        st.rerun()
 
-    st.info("로그인 또는 회원가입을 해주세요.")
+    st.info("로그인, 회원가입 또는 게스트로 이용해보세요.")
+
 
 # -------------- 메인 서비스 --------------
 else:
