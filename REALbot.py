@@ -182,7 +182,8 @@ def firebase_signup(email, password):
 # ===== Streamlit UI 시작 =====
 st.set_page_config(page_title="SEMIBOT 문학 챗봇", layout="centered")
 st.title("📚 SEMIBOT 문학 챗봇")
-
+st.write("API KEY 길이:", len(st.secrets['HF_API_KEY']))
+st.write("API KEY 앞 8자리:", st.secrets['HF_API_KEY'][:8])
 # ----------------- [로그인/회원가입] -----------------
 if 'user' not in st.session_state:
     menu = st.sidebar.selectbox('메뉴 선택', ['로그인', '회원가입'])
