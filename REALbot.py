@@ -475,8 +475,9 @@ else:
             <b>구성품</b> <br>
             📖 어린 왕자 미니북<br>
             🔖 책갈피<br>
-            💌 캐릭터 편지<br>
+            💌 캐릭터 편지<br> 
             🪐 문진 세트
+        </div>
         """
         st.markdown(card_style.format(content=product_content), unsafe_allow_html=True)
 
