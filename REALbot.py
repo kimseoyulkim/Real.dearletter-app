@@ -4,6 +4,10 @@ import json
 import firebase_admin
 from firebase_admin import credentials, db
 import requests
+import os
+print("현재 경로:", os.getcwd())
+print("파일 리스트:", os.listdir())
+
 import json
 with open("tarot.json", encoding="utf-8") as f:
     tarot_cards = json.load(f)
