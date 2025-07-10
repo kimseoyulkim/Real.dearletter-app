@@ -79,8 +79,6 @@ def firebase_signup(email, password):
 # =================== Streamlit UI 시작 ===================
 st.set_page_config(page_title="SEMIBOT 문학 챗봇", layout="centered")
 st.title("📚 SEMIBOT 문학 챗봇")
-st.write("Groq API KEY 길이:", len(st.secrets['GROQ_API_KEY']))
-st.write("Groq API KEY 앞 8자리:", st.secrets['GROQ_API_KEY'][:8])
 
 # -------------- 로그인/회원가입 --------------
 if 'user' not in st.session_state:
