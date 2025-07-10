@@ -411,30 +411,32 @@ else:
     elif page == "마켓":
         st.header("🎁 SEMIBOT 마켓")
         st.markdown("> **오늘의 조언 타로!**\n")
-        st.write("문학 캐릭터 명대사 기반으로 하루에 한 번 나만의 조언 카드를 뽑고, 고전·웹소설 추천도 받아보세요.")
+        st.write("아래 버튼을 눌러 랜덤 문학 캐릭터의 오늘의 조언 카드를 뽑아보세요!")
 
         import random
 
-        if 'chosen_idx' not in st.session_state:
-            random.shuffle(tarot_cards)
-            cols = st.columns(len(tarot_cards))
-            for i, card in enumerate(tarot_cards):
-                with cols[i]:
-                    st.markdown(f"**{card['character']}**")
-                    if st.button(f"카드 {i+1} 뽑기", key=f"draw_{i}"):
-                        st.session_state['chosen_idx'] = i
-                        st.rerun()
+        if 'tarot_drawn' not in st.session_state:
+            if st.button("타로 카드 뽑기!"):
+                # 캐릭터(카드) 랜덤, 명대사도 랜덤
+                card = random.choice(tarot_cards)
+                quote = random.choice(card["quotes"])
+                st.session_state['tarot_drawn'] = {
+                    "character": card["character"],
+                    "quote": quote,
+                    "classic_books": card["classic_books"],
+                    "webnovels": card["webnovels"]
+                }
+                st.rerun()
         else:
-            card = tarot_cards[st.session_state['chosen_idx']]
-            st.header(f"{card['character']}의 조언")
-            for q in card['quotes']:
-                st.markdown(f"- _{q}_")
+            card = st.session_state['tarot_drawn']
+            st.header(f"✨ {card['character']}의 조언")
+            st.success(f"“{card['quote']}”")
             st.markdown("### 📚 고전 추천")
-            st.markdown(", ".join(card['classic_books']))
+            st.markdown(", ".join(card["classic_books"]))
             st.markdown("### 📖 웹소설 추천")
-            st.markdown(", ".join(card['webnovels']))
+            st.markdown(", ".join(card["webnovels"]))
             if st.button("다시 뽑기"):
-                del st.session_state['chosen_idx']
+                del st.session_state['tarot_drawn']
                 st.rerun()
 
     # ---------- [로그아웃] ----------
