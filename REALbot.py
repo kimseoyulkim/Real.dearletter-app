@@ -409,39 +409,62 @@ else:
 
     
         # ---------- [마켓] ----------
-    
     elif page == "마켓":
-    st.header("🎁 SEMIBOT 마켓")
-    st.subheader("🔮 오늘의 문학 타로 카드")
-    st.write("버튼을 눌러 랜덤 문학 캐릭터의 조언 타로카드를 받아보세요!")
+        st.header("🎁 SEMIBOT 마켓")
+        st.subheader("🔮 오늘의 문학 타로 카드")
+        st.write("버튼을 눌러 랜덤 문학 캐릭터의 조언 타로카드를 받아보세요!")
 
-    icon_map = {
-        "데미안": "🌑", "엘리자베스 베넷": "🌹",
-        "앤 셜리": "🦋", "어린 왕자": "🦊", "도로시": "🟡"
-    }
+    # 카드 스타일: 연보라 배경
+        card_style = """
+            <div style="
+                background: #ece6ff;
+                border-radius: 18px;
+                border: 1.5px solid #b497ec;
+                box-shadow: 0 4px 16px #c2b8e8;
+                padding: 28px 18px 20px 18px;
+                margin-bottom: 24px;
+                max-width: 420px;
+                margin-left: auto;
+                margin-right: auto;
+            ">
+                {content}
+            </div>
+        """
 
-    if 'tarot_drawn' not in st.session_state:
-        if st.button("✨ 타로카드 뽑기!", use_container_width=True):
-            card = random.choice(tarot_cards)
-            quote = random.choice(card["quotes"])
-            st.session_state['tarot_drawn'] = {
-                "character": card["character"],
-                "quote": quote,
-                "classic_books": card["classic_books"],
-                "webnovels": card["webnovels"]
-            }
-            st.rerun()
-    else:
-        card = st.session_state['tarot_drawn']
-        icon = icon_map.get(card['character'], "📚")
-        # 자연어로만 출력!
-        st.markdown(f"### {icon} {card['character']}의 조언")
-        st.markdown(f"> **{card['quote']}**")
-        st.markdown(f"**고전 추천:** {', '.join(card['classic_books'])}")
-        st.markdown(f"**웹소설 추천:** {', '.join(card['webnovels'])}")
-        if st.button("🔄 다시 뽑기", use_container_width=True):
-            del st.session_state['tarot_drawn']
-            st.rerun()
+        icon_map = {
+            "데미안": "🌑", "엘리자베스 베넷": "🌹",
+            "앤 셜리": "🦋", "어린 왕자": "🦊", "도로시": "🟡"
+        }
+
+        if 'tarot_drawn' not in st.session_state:
+            if st.button("✨ 타로카드 뽑기!", use_container_width=True):
+                card = random.choice(tarot_cards)
+                quote = random.choice(card["quotes"])
+                st.session_state['tarot_drawn'] = {
+                    "character": card["character"],
+                    "quote": quote,
+                    "classic_books": card["classic_books"],
+                    "webnovels": card["webnovels"]
+                }
+                st.rerun()
+        else:
+            card = st.session_state['tarot_drawn']
+            icon = icon_map.get(card['character'], "📚")
+        # 자연어로 깔끔하게 보여줌
+            content = f"""
+            <div style="text-align:center;">
+                <span style="font-size:2em;">{icon} <b>{card['character']}</b>의 조언</span><br><br>
+                <span style="font-size:1.2em; color:#49308f;">“{card['quote']}”</span>
+                <hr style="border:1px dashed #bca6f6; margin:18px 0 12px 0;">
+                <b>고전 추천:</b> {', '.join(card['classic_books'])}<br>
+                <b>웹소설 추천:</b> {', '.join(card['webnovels'])}
+            </div>
+            """
+            st.markdown(card_style.format(content=content), unsafe_allow_html=True)
+            if st.button("🔄 다시 뽑기", use_container_width=True):
+                del st.session_state['tarot_drawn']
+                st.rerun()
+   
 
     # ---------- [로그아웃] ----------
     if st.button("로그아웃"):
