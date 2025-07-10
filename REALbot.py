@@ -190,7 +190,7 @@ def firebase_signup(email, password):
 
 # =================== Streamlit UI 시작 ===================
 st.set_page_config(page_title="SEMIBOT 문학 챗봇", layout="centered")
-st.title("📚 SEMIBOT 문학 챗봇")
+st.title("📚DEARLETTER")
 
 # -------------- 로그인/회원가입 --------------
 if 'user' not in st.session_state:
@@ -249,7 +249,7 @@ else:
         st.session_state['page'] = "홈"
 
     page = st.sidebar.selectbox(
-        "이동", page_list,
+        "기능", page_list,
         index=page_list.index(st.session_state['page']),
         key="page_selectbox"
     )
