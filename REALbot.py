@@ -382,10 +382,11 @@ else:
         if send_btn:
             if msg.strip() != "":
                 new_chats = prev_chats + [f"나: {msg}"]
-                new_chats.append(f"{selected_character}: (챗봇 답변 샘플)")
+                with st.spinner("AI 답변 생성 중... (최대 1분 소요)"):
+                    ai_reply = kogpt2_reply(selected_character, msg)
+                new_chats.append(f"{selected_character}: {ai_reply}")
                 ref.set(new_chats)
                 st.rerun()
-
         if delete_btn:
             ref.delete()
             st.rerun()
