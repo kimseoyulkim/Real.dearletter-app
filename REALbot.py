@@ -189,7 +189,7 @@ def firebase_signup(email, password):
         raise Exception(res.json().get('error', {}).get('message', '회원가입 실패'))
 
 # =================== Streamlit UI 시작 ===================
-st.set_page_config(page_title="SEMIBOT 문학 챗봇", layout="centered")
+st.set_page_config(page_title="DEARLETTER 문학 챗봇", layout="centered")
 st.title("📚DEARLETTER")
 
 # -------------- 로그인/회원가입 --------------
@@ -262,7 +262,7 @@ else:
     # ---------- [홈] ----------
     if page == "홈":
         st.header("홈")
-        st.markdown("여기는 DEARLETTER의 홈입니다. 기능 버튼을 눌러보세요!")
+        st.markdown("여기는 독서 챗봇 DEARLETTER의 홈입니다. 문학이 말을 걸려고 해요, 기능 버튼을 눌러보세요!")
 
     # ---------- [독서성향테스트] ----------
     elif page == "독서성향테스트":
