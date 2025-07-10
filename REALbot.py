@@ -244,11 +244,18 @@ if 'user' not in st.session_state and 'guest_mode' not in st.session_state:
 
 
 # -------------- 메인 서비스 --------------
-else:
-    user_email = st.session_state['user']['email']
-    nickname = st.session_state.get('nickname', user_email)
+elif 'user' in st.session_state or st.session_state.get('guest_mode', False):
+    # 1. 닉네임/이메일 분기 처리
+    if 'user' in st.session_state:
+        user_email = st.session_state['user']['email']
+        nickname = st.session_state.get('nickname', user_email)
+    else:  # 게스트 모드
+        user_email = ''
+        nickname = '게스트'
+
     st.sidebar.success(f"{nickname}님, 환영합니다!")
 
+    # 2. 페이지 이동 코드 (이전과 동일)
     page_list = ["홈", "독서성향테스트", "챗봇", "마이페이지", "마켓"]
     if 'page' not in st.session_state:
         st.session_state['page'] = "홈"
@@ -263,6 +270,7 @@ else:
         st.rerun()
     else:
         page = st.session_state['page']
+
 
     # ---------- [홈] ----------
     if page == "홈":
@@ -490,6 +498,6 @@ else:
         st.markdown(card_style.format(content=product_content), unsafe_allow_html=True)
 
     # ---------- [로그아웃] ----------
-    if st.button("로그아웃"):
+    if st.button("로그아웃/게스트 종료"):
         st.session_state.clear()
         st.rerun()
