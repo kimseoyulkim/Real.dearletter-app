@@ -1,10 +1,3 @@
-
-import os
-
-print("실행 경로:", os.getcwd())
-print("해당 폴더 파일 리스트:", os.listdir())
-
-
 import streamlit as st
 import base64
 import json
