@@ -477,7 +477,6 @@ else:
             🔖 책갈피<br>
             💌 캐릭터 편지<br>
             🪐 문진 세트
-        </div>
         """
         st.markdown(card_style.format(content=product_content), unsafe_allow_html=True)
 
