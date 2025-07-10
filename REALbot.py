@@ -262,7 +262,7 @@ else:
     # ---------- [홈] ----------
     if page == "홈":
         st.header("홈")
-        st.markdown("여기는 SEMIBOT의 홈입니다. 기능 버튼을 눌러보세요!")
+        st.markdown("여기는 DEARLETTER의 홈입니다. 기능 버튼을 눌러보세요!")
 
     # ---------- [독서성향테스트] ----------
     elif page == "독서성향테스트":
@@ -285,7 +285,7 @@ else:
         ])
         q3 = st.radio("3. 자신과 가장 닮았다고 생각되는 동물은 무엇인가요?", [
             "1. 독립적이고 예리한 고양이",
-            "2. 신비롭고 똑똑한 부엉이",
+            "2. 신비롭고 지적인 부엉이",
             "3. 에너지 넘치고 호기심 많은 다람쥐",
             "4. 순수하고 생각이 깊은 양",
             "5. 용감하고 다정한 골든 리트리버"
@@ -408,7 +408,7 @@ else:
 
     # ---------- [마켓] ----------
     elif page == "마켓":
-        st.header("🎁 SEMIBOT 마켓")
+        st.header("🎁 DEARLETTER 마켓")
         st.subheader("🔮 오늘의 문학 타로 카드")
         st.write("버튼을 눌러 랜덤 문학 캐릭터의 조언 타로카드를 받아보세요!")
 
@@ -477,8 +477,7 @@ else:
             🔖 책갈피<br>
             💌 캐릭터 편지<br> 
             🪐 문진 세트
-        </div>
-        """
+        </div>"""
         st.markdown(card_style.format(content=product_content), unsafe_allow_html=True)
 
     # ---------- [로그아웃] ----------
