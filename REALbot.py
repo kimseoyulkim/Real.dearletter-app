@@ -470,7 +470,7 @@ else:
         product_content = f"""
         <div style="text-align:center;">
             {image_tag}
-            <span style="font-size:2em;">🎁 <b>오늘의 추천 상품</b></span><br><br>
+            <span style="font-size:2em;"> <b>오늘의 추천 상품</b></span><br><br>
             <span style="font-size:1.3em; color:#49308f;"><b>왓츠 인 마이 북</b></span><br>
             <span style="font-size:1.1em; color:#7251b5;">
                 책장 위의 작은 우주, 당신의 하루를 상상력으로 밝혀줄 특별한 선물 상자.
