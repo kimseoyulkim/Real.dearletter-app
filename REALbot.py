@@ -6,7 +6,7 @@ from firebase_admin import credentials, db
 import requests
 
 # Hugging Face Zephyr-7b-beta Inference API 연동 함수 (한글 프롬프트 실험)
-HF_API_URL = "https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta"
+HF_API_URL = "https://api-inference.huggingface.co/models/google/gemma-2b-it"
 HF_HEADERS = {"Authorization": f"Bearer {st.secrets['HF_API_KEY']}"}
 
 # 캐릭터별 프롬프트 (한글 간결 버전 권장, 장문 X)
