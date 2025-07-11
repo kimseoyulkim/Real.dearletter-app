@@ -235,6 +235,7 @@ if 'user' not in st.session_state and 'guest_mode' not in st.session_state:
                     st.success('회원가입 성공! 로그인 해주세요.')
                 except Exception as e:
                     st.error(f"회원가입 실패: {e}")
+                    
     elif menu == '게스트로 시작하기':
         st.session_state['guest_mode'] = True
         st.session_state['nickname'] = '게스트'
@@ -245,6 +246,7 @@ if 'user' not in st.session_state and 'guest_mode' not in st.session_state:
 
 # -------------- 메인 서비스 --------------
 elif 'user' in st.session_state or st.session_state.get('guest_mode', False):
+    
     # 1. 닉네임/이메일 분기 처리
     if 'user' in st.session_state:
         user_email = st.session_state['user']['email']
@@ -365,7 +367,7 @@ elif 'user' in st.session_state or st.session_state.get('guest_mode', False):
             """)
 
     # ---------- [챗봇] ----------
-    if page == "챗봇":
+    elif page == "챗봇":
         character_list = ["엘리자베스 베넷", "데미안", "앤 셜리", "어린 왕자", "도로시"]
 
         if 'selected_character' not in st.session_state or st.session_state['selected_character'] not in character_list:
@@ -423,13 +425,12 @@ elif 'user' in st.session_state or st.session_state.get('guest_mode', False):
                 st.rerun()
 
     # --- 대화 전체 삭제 ---
-    if delete_btn:
-        if uid:
-            ref.delete()
-        else:
-            st.session_state[chat_key] = []
-        st.rerun()
-
+        if delete_btn:
+            if uid:
+                ref.delete()
+            else:
+                st.session_state[chat_key] = []
+            st.rerun()
 
 
 
