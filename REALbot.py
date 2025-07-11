@@ -434,14 +434,11 @@ elif 'user' in st.session_state or st.session_state.get('guest_mode', False):
 
 
 
-
-
-    
-        elif page == "마이페이지":
-            st.header("📊 마이페이지")
-            st.markdown(f"**닉네임:** {nickname}")
-            st.markdown(f"**이메일:** {user_email}")
-            st.markdown("포인트, 문해력 레벨, 테마, 리딩 목표 등 표시 (예시)")
+    elif page == "마이페이지":
+        st.header("📊 마이페이지")
+        st.markdown(f"**닉네임:** {nickname}")
+        st.markdown(f"**이메일:** {user_email}")
+        st.markdown("포인트, 문해력 레벨, 테마, 리딩 목표 등 표시 (예시)")
 
     # ---------- [마켓] ----------
     elif page == "마켓":
